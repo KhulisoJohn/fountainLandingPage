@@ -379,6 +379,7 @@ strong {
 
 /* Portfolio */
 
+
 .nav .nav-link a {
     position: relative;
 }
@@ -397,13 +398,13 @@ strong {
     width: 100%
 }
 
-#portfolio .nav { 
+#portfolio .nav {
     margin-bottom: 50px;
- } 
+}
 
- .portfolio__item {
-     margin-bottom: 30px; 
-    }
+.portfolio__item {
+    margin-bottom: 30px;
+}
 
 #portfolio .nav-link {
     color: rgb(34, 34, 34);
@@ -444,13 +445,8 @@ strong {
     transform: translatey(-15px);
     transition: all 0.5s;
 }
-#portfolio .row img{
-    margin: 15px 0;
-    border-radius: 5%;
-    
-}
 
-/*.icons-portfolio i {
+.icons-portfolio i {
     width: 30px;
     height: 30px;
     line-height: 28px;
@@ -464,49 +460,7 @@ strong {
 .icons-portfolio a:hover i {
     background: transparent;
     color: #000;
-}*/
-
-/* Underline the active tab link with transition */
-.nav-pills .nav-link {
-    position: relative;
-    text-decoration: none;
 }
-
-.nav-pills .nav-link.active {
-   
-    font-weight: bold; /* Optional */
-}
-
-/* Smooth transition for the underline effect */
-.nav-pills .nav-link::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 0;
-    height: 2px; /* Thickness of the underline */
-    background-color: black; /* Color of the underline */
-    transition: width 0.3s ease; /* Transition effect for the underline */
-}
-
-.nav-pills .nav-link.active::after {
-    width: 100%; /* Full width when active */
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /* Clients */
 .carousel-item img {
@@ -609,13 +563,6 @@ button.contact__btn {
 }
 
 
-/* Footer */
-footer {
-    padding: 30px;
-}
-
-footer p {
-    font-size: 13px;
-    line-height: 20.8px;
-    word-spacing: 2px;
+.bi {
+    color: white;
 }

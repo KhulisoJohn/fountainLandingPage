@@ -59,6 +59,6 @@ function updateIndex() {
         purposeIndex = 0;
     }
     
-    setTimeout(updateIndex, 400);
+    setTimeout(updateIndex, 200);
 }
 updateIndex();
