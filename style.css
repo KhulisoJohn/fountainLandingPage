@@ -71,6 +71,7 @@ button.contact__btn,
 
 button.contact__btn:hover,
 .about__btn:hover button {
+    background-color: white;
     color: rgb(28, 28, 28) !important;
     border: 1px solid #1c1c1c;
 }
@@ -110,50 +111,44 @@ nav.scrolledNav a.nav-link:hover {
 
 
 
-nav.scrolledNav span.navbar-toggler-icon {
-    border: #000 1px solid;
-    border-radius: 5px;
-    background-color: black;
+nav.scrolledNav button.navbar-toggler {
+   color: black;
 }
 
 @media screen and (max-width:768px) {
 
     nav.scrolledNav .collapse,
     .collapsing {
-        margin-top: 35px;
+      height: 100%;
     }
 }
 
 /* Navbar */
 nav {
     background-color: transparent;
-    padding-block: 35px !important;
-
+   /* padding-block: 35px !important;*/
+    height: 90px;
+   
 }
-
 .logo-img{
     width: 50px;
     height: 50px;
     border-radius: 50%;
     margin: 0 1.5rem;
 }
-
 .navbar-brand {
-    font-size: 18PX;
+    font-size: 18px;
     font-weight: 800;
     letter-spacing: 1px;
 }
-
 .nav-link {
     color: white;
     font-size: 14px;
     font-weight: 400;
 }
-
 .navbar-nav .nav-link span {
     position: relative;
 }
-
 .navbar-nav .nav-link span::after {
     content: "";
     position: absolute;
@@ -164,35 +159,30 @@ nav {
     background-color: white;
     transition: 0.4s;
 }
-
 .navbar-nav .nav-link.active span::after {
     width: 100%;
 }
-
 .navbar-toggler {
     color: #fff;
-    font-size: 20px;
+    font-size: 2rem;
     cursor: pointer;
     line-height: 0;
     transition: 0.5s;
     border: none;
     border-radius: 0;
 }
-
 .navbar-toggler-icon {
     color: white;
 }
-
 .navbar-toggler:focus {
     box-shadow: none;
 }
-
 .navbar-nav .nav-link.active {
     color: white;
 }
 
-@media screen and (max-width:768px) {
 
+@media screen and (max-width: 768px) {
     .collapse,
     .collapsing {
         background-color: transparent !important;
@@ -203,12 +193,9 @@ nav {
         top: 0;
         left: 0;
         margin-top: 60px;
-        padding-block: 10px;
+        padding-block: 20px;
         box-sizing: border-box;
-
     }
-
-
     .collapse ul,
     .collapsing ul {
         background-color: white;
@@ -216,31 +203,46 @@ nav {
         height: auto;
         text-align: center;
     }
-
     .nav-link {
         color: black;
         padding: 10px 20px;
         font-size: 15px;
     }
-
     .nav-link:hover {
         color: black;
     }
-
     .navbar-nav .nav-link.active {
         color: black;
     }
-
     .navbar-nav .nav-link span::after {
         background-color: black;
-        /* Black underline for small screens */
+        
     }
+}
+
+.home-nav .navbar {
+    padding-block: 20px !important; 
+    height: auto; 
+}
+
+.home-nav .logo-img {
+    width: 40px;
+    height: 40px;
+    margin: 0 1rem;
+}
+
+.home-nav .navbar-toggler {
+    font-size: 18px;
+}
+
+.home-nav .navbar-nav {
+    padding-right: 1.5rem;
 }
 
 
 /* Home__Section */
 #Home {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(https://mapeni.sirv.com/Images/fountain/home.png);
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(https://mapeni.sirv.com/Images/fountain/home4.jpg);
     background-size: cover;
 }
 
@@ -311,35 +313,8 @@ strong {
     letter-spacing: 0;
 }
 
-.Progress__Daniel {
-    margin-top: 30px;
-}
 
-.Progress__Daniel .progress {
-    background: #f7f7f7;
-    box-shadow: 0px 2px 7px rgba(0, 0, 0, 0.15) inset;
-    border-radius: 5px;
-    height: 1.5rem;
-    margin-bottom: 30px;
-}
 
-.Progress__Daniel .progress-bar {
-    background-color: #1c1c1c;
-    flex-direction: row;
-    justify-content: space-between;
-    border-radius: 5px;
-    align-items: center;
-}
-
-.Progress__Daniel .progress-bar h6 {
-    font-size: 13px;
-
-}
-
-.Progress__Daniel .progress-bar span {
-    font-size: 11px;
-    letter-spacing: 0;
-}
 
 .about__btn button,
 .contact__me__btn button {
@@ -422,13 +397,13 @@ strong {
     width: 100%
 }
 
-#portfolio .nav {
+#portfolio .nav { 
     margin-bottom: 50px;
-}
+ } 
 
-.portfolio__item {
-    margin-bottom: 30px;
-}
+ .portfolio__item {
+     margin-bottom: 30px; 
+    }
 
 #portfolio .nav-link {
     color: rgb(34, 34, 34);
@@ -469,8 +444,13 @@ strong {
     transform: translatey(-15px);
     transition: all 0.5s;
 }
+#portfolio .row img{
+    margin: 15px 0;
+    border-radius: 5%;
+    
+}
 
-.icons-portfolio i {
+/*.icons-portfolio i {
     width: 30px;
     height: 30px;
     line-height: 28px;
@@ -484,8 +464,34 @@ strong {
 .icons-portfolio a:hover i {
     background: transparent;
     color: #000;
+}*/
+
+/* Underline the active tab link with transition */
+.nav-pills .nav-link {
+    position: relative;
+    text-decoration: none;
 }
 
+.nav-pills .nav-link.active {
+   
+    font-weight: bold; /* Optional */
+}
+
+/* Smooth transition for the underline effect */
+.nav-pills .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 2px; /* Thickness of the underline */
+    background-color: black; /* Color of the underline */
+    transition: width 0.3s ease; /* Transition effect for the underline */
+}
+
+.nav-pills .nav-link.active::after {
+    width: 100%; /* Full width when active */
+}
 
 
 
@@ -538,103 +544,6 @@ strong {
 .carousel-indicators button:not(.active):hover {
     opacity: 1;
 }
-
-/* Numbers */
-.item__numbers i,
-h3 {
-    font-size: 30px;
-    margin-bottom: 15px;
-}
-
-.item__numbers p {
-    margin-bottom: 30px;
-    line-height: 24px;
-    font-size: 15px;
-}
-
-/* Team */
-
-.team-img img {
-    transition: all 0.4s ease 0s;
-}
-
-.team-img:hover img {
-    transform: scale(1.2);
-}
-
-.team-item {
-    padding-top: 37.5px;
-    margin-bottom: 10px;
-}
-
-.social__icons {
-    opacity: 0;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    left: 0;
-    inset: 5px;
-    transition: 0.5s;
-}
-
-.team-img:hover .social__icons,
-.team-item:hover .social__icons {
-    opacity: 0.95;
-    transform: rotatey(180deg);
-
-}
-
-.team-img:hover .social__icons ul li,
-.team-item:hover .social__icons ul li {
-    transform: scale(2);
-    margin: 10px;
-}
-
-.team-img:hover .social__icons ul,
-.team-item:hover .social__icons ul {
-    transform: rotatey(180deg);
-    width: 100%;
-    height: 100%;
-}
-
-.social__icons ul {
-    transition: 0.5s;
-    width: 50%;
-    height: 50%;
-    padding: 20px;
-}
-
-.social__icons i {
-    width: 20px;
-    height: 20px;
-    color: white;
-    font-size: 10px;
-    border: 1px black solid;
-    transition: 0.5s;
-}
-
-.social__icons i:hover {
-    color: black;
-    background-color: white !important;
-}
-
-.team__content {
-    padding: 25px;
-    background-color: #5B5B5B;
-    border-radius: 0 0 6px 6px;
-}
-
-.team__content h4 {
-    font-size: 25px;
-    line-height: 27.5px;
-}
-
-.team__content h5 {
-    font-size: 20px;
-    line-height: 22px;
-}
-
-
 
 /* Contact__us */
 #contact__section .row {
