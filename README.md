@@ -1,4 +1,4 @@
-# Fountain Ministries SA Website
+# Fountain Ministry SA Website
 
 ## 🌐 Live Site  
 [![Fountain Ministries SA](https://img.shields.io/badge/Live%20Site-Click%20Here-brightgreen)](https://fountainministrysa.netlify.app/)
@@ -47,8 +47,8 @@ Fountain-Ministries-SA/
 ## 🚀 Getting Started  
 ### 🔹 Clone the Repository  
 ```bash
-git clone https://github.com/your-username/fountain-ministries-sa.git
-cd fountain-ministries-sa
+git clone https://github.com/your-username/fountain-ministry-sa.git
+cd fountain-ministriey-sa
 ```
 ### 🔹 Open the Project  
 Simply open `index.html` in your browser or use **Live Server** in VS Code.  
