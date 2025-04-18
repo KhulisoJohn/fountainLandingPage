@@ -62,11 +62,9 @@ Simply open `index.html` in your browser or use **Live Server** in VS Code.
 - 🔹 Enhance with **React or TypeScript** for scalability  
 
 ## 🙏 Acknowledgments  
-Huge thanks to **Fountain Ministries SA** for the opportunity to build this platform. Also grateful for the knowledge gained at **Techbridle Foundation**!  
+Huge thanks to **Fountain Ministry SA** for the opportunity to build this platform. Also grateful for the knowledge gained at **Techbridle Foundation**!  
 
-## ☕ Support My Work  
-If you like this project, consider buying me a coffee! It keeps me motivated to build more cool stuff.  
-[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-Donate-yellow)](https://www.buymeacoffee.com/yourusername)  
+
 
 ## 📩 Contact & Follow Me  
 Let’s connect! Follow me for more projects and updates.  
