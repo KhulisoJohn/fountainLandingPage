@@ -1,20 +1,47 @@
 import requests
 import os
+from app.utils.logger import logger
+
 
 class EmailService:
 
-    @staticmethod
-    def send_welcome_email(to_email, name):
+    BASE_URL = "https://api.brevo.com/v3/smtp/email"
+    API_KEY = os.getenv("BREVO_API_KEY")
 
-        url = "https://api.brevo.com/v3/smtp/email"
+    @staticmethod
+    def _send_email(payload):
 
         headers = {
             "accept": "application/json",
-            "api-key": os.getenv("BREVO_API_KEY"),
+            "api-key": EmailService.API_KEY,
             "content-type": "application/json"
         }
 
-        data = {
+        try:
+            response = requests.post(
+                EmailService.BASE_URL,
+                json=payload,
+                headers=headers,
+                timeout=10
+            )
+
+            if response.status_code not in [200, 201, 202]:
+                logger.error(f"EMAIL_FAILED | status={response.status_code} | response={response.text}")
+                return False
+
+            logger.info("EMAIL_SENT_SUCCESS")
+            return True
+
+        except Exception as e:
+            logger.error(f"EMAIL_EXCEPTION | error={str(e)}")
+            return False
+
+
+    # ---------------- WELCOME EMAIL ----------------
+    @staticmethod
+    def send_welcome_email(to_email, name):
+
+        payload = {
             "sender": {
                 "name": "Fountain Ministry SA",
                 "email": "no-reply@fountainministrysa.net"
@@ -35,6 +62,79 @@ class EmailService:
             """
         }
 
-        response = requests.post(url, json=data, headers=headers)
+        return EmailService._send_email(payload)
 
-        return response.status_code, response.json()
+
+    # ---------------- VERIFY EMAIL ----------------
+    @staticmethod
+    def send_verification_email(to_email, token):
+
+        payload = {
+            "sender": {
+                "name": "Fountain Ministry SA",
+                "email": "no-reply@fountainministrysa.net"
+            },
+            "to": [
+                {"email": to_email}
+            ],
+            "subject": "Verify Your Account",
+            "htmlContent": f"""
+                <h2>Email Verification</h2>
+                <p>Please verify your account by clicking below:</p>
+                <a href="http://localhost:5000/api/auth/verify/{token}">
+                    Verify Account
+                </a>
+            """
+        }
+
+        return EmailService._send_email(payload)
+
+
+    # ---------------- RESET PASSWORD ----------------
+    @staticmethod
+    def send_reset_password_email(to_email, token):
+
+        payload = {
+            "sender": {
+                "name": "Fountain Ministry SA",
+                "email": "no-reply@fountainministrysa.net"
+            },
+            "to": [
+                {"email": to_email}
+            ],
+            "subject": "Reset Your Password",
+            "htmlContent": f"""
+                <h2>Password Reset</h2>
+                <p>Click below to reset your password:</p>
+                <a href="http://localhost:5000/api/auth/reset-password/{token}">
+                    Reset Password
+                </a>
+            """
+        }
+
+        return EmailService._send_email(payload)
+
+
+    # ---------------- DELETE CONFIRMATION ----------------
+    @staticmethod
+    def send_delete_confirmation_email(to_email, token):
+
+        payload = {
+            "sender": {
+                "name": "Fountain Ministry SA",
+                "email": "no-reply@fountainministrysa.net"
+            },
+            "to": [
+                {"email": to_email}
+            ],
+            "subject": "Confirm Account Deletion",
+            "htmlContent": f"""
+                <h2>Account Deletion Request</h2>
+                <p>If this was you, confirm deletion below:</p>
+                <a href="http://localhost:5000/api/auth/confirm-delete/{token}">
+                    Confirm Delete
+                </a>
+            """
+        }
+
+        return EmailService._send_email(payload)

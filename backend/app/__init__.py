@@ -4,39 +4,63 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from flask_cors import CORS
-load_dotenv()
+from sqlalchemy import text
 
-from app.config.db import Config 
+import os
+
+from app.config.db import Config
+from app.utils.logger import logger
+
+load_dotenv()
 
 db = SQLAlchemy()
 jwt = JWTManager()
 migrate = Migrate()
+
+
 def create_app():
 
-    load_dotenv()
+    logger.info("APPLICATION_STARTUP")
 
-    app = Flask(__name__)
+    try:
+        load_dotenv()
+        logger.info("ENV_LOADED")
 
-    # Load configuration
-    app.config.from_object(Config)
+        app = Flask(__name__)
+        app.config.from_object(Config)
 
-    CORS(app)
+        logger.info("CONFIG_LOADED")
 
-    db.init_app(app)
+        CORS(app)
 
-    with app.app_context():
-        from sqlalchemy import text
-        db.session.execute(text("SELECT 1"))
-        print("Database connected successfully!")
+        db.init_app(app)
+        logger.info("DB_INITIALIZED")
 
-    jwt.init_app(app)
-    migrate.init_app(app, db)
+        # Test DB connection
+        with app.app_context():
+            db.session.execute(text("SELECT 1"))
+            logger.info("DATABASE_CONNECTED")
 
-    from app.routes.auth_routes import auth_bp
-    app.register_blueprint(auth_bp, url_prefix="/api/auth")
+        jwt.init_app(app)
+        logger.info("JWT_INITIALIZED")
 
-    @app.route("/")
-    def home():
-        return {"message": "Backend running successfully"}
+        migrate.init_app(app, db)
+        logger.info("MIGRATION_INITIALIZED")
 
-    return app
+        # Blueprints
+        from app.routes.auth_routes import auth_bp
+        app.register_blueprint(auth_bp, url_prefix="/api/auth")
+        logger.info("AUTH_BLUEPRINT_REGISTERED")
+
+        @app.route("/")
+        def home():
+            logger.info("HEALTH_CHECK_REQUEST")
+            return {"message": "Backend running successfully"}
+
+        logger.info("APPLICATION_READY")
+
+        return app
+
+    except Exception as e:
+        logger.error(f"APPLICATION_STARTUP_FAILED | error={str(e)}")
+        raise
