@@ -1,160 +1,168 @@
 from flask import Blueprint, request
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+
 from app.services.auth_service import AuthService
-from app.services.tokenService import TokenService
-from app.services.securityService import SecurityService
-from app.services.email_service import EmailService
-from app.repositories.userRepository import UserRepo
-from app import db
-from app.models.verificationToken import Token
+from app.utils.logger import logger
 
 auth_bp = Blueprint("auth", __name__)
 
+
+# ---------------- REGISTER ----------------
 @auth_bp.route("/register", methods=["POST"])
 def register():
 
-    user, err = AuthService.register(request.get_json())
+    data = request.get_json()
+    email = data.get("email")
+
+    logger.info(f"REGISTER request | email={email}")
+
+    _, err = AuthService.register(data)
 
     if err:
+        logger.warning(f"REGISTER failed | email={email} | reason={err}")
         return {"error": err}, 400
 
+    logger.info(f"REGISTER success | email={email}")
     return {"message": "Check email"}, 201
 
+
+# ---------------- VERIFY EMAIL ----------------
 @auth_bp.route("/verify/<token>")
 def verify(token):
 
-    record = TokenService.get(token, "verify_email")
+    logger.info("EMAIL_VERIFY request")
 
-    if not record:
-        return {"error": "Invalid token"}, 400
+    success, err = AuthService.verify_email(token)
 
-    user = UserRepo.find_by_id(record.user_id)
+    if not success:
+        logger.warning(f"EMAIL_VERIFY failed | reason={err}")
+        return {"error": err}, 400
 
-    user.status = "active"
-    user.email_verified = True
-
-    record.used = True
-
-    db.session.commit()
-
+    logger.info("EMAIL_VERIFY success")
     return {"message": "Verified"}, 200
 
+
+# ---------------- LOGIN ----------------
 @auth_bp.route("/login", methods=["POST"])
 def login():
 
     data = request.get_json()
+    email = data.get("email")
 
-    user = AuthService.login(data["email"], data["password"])
+    logger.info(f"LOGIN request | email={email}")
 
-    if not user:
-        return {"error": "Invalid or unverified"}, 401
+    user, err = AuthService.login(email, data["password"])
+
+    if err:
+        logger.warning(f"LOGIN failed | email={email} | reason={err}")
+        return {"error": err}, 401
 
     token = create_access_token(identity={
         "id": user.id,
         "role": user.role
     })
 
+    logger.info(f"LOGIN success | user_id={user.id}")
+
     return {"token": token}, 200
 
+
+# ---------------- FORGOT PASSWORD ----------------
 @auth_bp.route("/forgot-password", methods=["POST"])
 def forgot_password():
 
     data = request.get_json()
-    email = data["email"]
+    email = data.get("email")
 
-    user = UserRepo.find_by_email(email)
+    logger.info(f"FORGOT_PASSWORD request | email={email}")
 
-    # Always return same response (security best practice)
-    if user:
-        token = TokenService.create(user.id, "reset_password")
-
-        EmailService.send(
-            user.email,
-            "Reset Password",
-            f"http://localhost:5000/api/auth/reset-password/{token}"
-        )
+    AuthService.forgot_password(email)
 
     return {"message": "If account exists, reset email sent"}, 200
 
+
+# ---------------- RESET PASSWORD ----------------
 @auth_bp.route("/reset-password/<token>", methods=["POST"])
 def reset_password(token):
 
-    record = TokenService.get(token, "reset_password")
-
-    if not record:
-        return {"error": "Invalid token"}, 400
-
     data = request.get_json()
 
-    user = UserRepo.find_by_id(record.user_id)
+    logger.info("RESET_PASSWORD request")
 
-    user.password = SecurityService.hash(data["new_password"])
+    success, err = AuthService.reset_password(token, data["new_password"])
 
-    record.used = True
+    if not success:
+        logger.warning(f"RESET_PASSWORD failed | reason={err}")
+        return {"error": err}, 400
 
-    db.session.commit()
+    logger.info("RESET_PASSWORD success")
 
     return {"message": "Password updated"}, 200
 
-from flask_jwt_extended import jwt_required, get_jwt_identity
 
+# ---------------- CHANGE PASSWORD ----------------
 @auth_bp.route("/change-password", methods=["POST"])
 @jwt_required()
 def change_password():
 
     user_id = get_jwt_identity()["id"]
-    user = UserRepo.find_by_id(user_id)
-
     data = request.get_json()
 
-    if not SecurityService.verify(data["old_password"], user.password):
-        return {"error": "Wrong password"}, 401
+    logger.info(f"CHANGE_PASSWORD request | user_id={user_id}")
 
-    user.password = SecurityService.hash(data["new_password"])
+    success, err = AuthService.change_password(
+        user_id,
+        data["old_password"],
+        data["new_password"]
+    )
 
-    db.session.commit()
+    if not success:
+        logger.warning(f"CHANGE_PASSWORD failed | user_id={user_id} | reason={err}")
+        return {"error": err}, 401
+
+    logger.info(f"CHANGE_PASSWORD success | user_id={user_id}")
 
     return {"message": "Password changed"}, 200
 
+
+# ---------------- DELETE ACCOUNT ----------------
 @auth_bp.route("/delete-account", methods=["POST"])
 @jwt_required()
 def delete_account_request():
 
     user_id = get_jwt_identity()["id"]
 
-    token = TokenService.create(user_id, "delete_account")
+    logger.warning(f"DELETE_ACCOUNT request | user_id={user_id}")
 
-    user = UserRepo.find_by_id(user_id)
-
-    EmailService.send(
-        user.email,
-        "Confirm Account Deletion",
-        f"http://localhost:5000/api/auth/confirm-delete/{token}"
-    )
+    AuthService.request_delete_account(user_id)
 
     return {"message": "Check email to confirm deletion"}, 200
 
+
+# ---------------- CONFIRM DELETE ----------------
 @auth_bp.route("/confirm-delete/<token>", methods=["GET"])
 def confirm_delete(token):
 
-    record = TokenService.get(token, "delete_account")
+    logger.warning("CONFIRM_DELETE request")
 
-    if not record:
-        return {"error": "Invalid token"}, 400
+    success, err = AuthService.confirm_delete(token)
 
-    user = UserRepo.find_by_id(record.user_id)
+    if not success:
+        logger.warning(f"CONFIRM_DELETE failed | reason={err}")
+        return {"error": err}, 400
 
-    user.is_active = False
-    user.status = "deleted"
-
-    record.used = True
-
-    db.session.commit()
+    logger.warning("ACCOUNT DELETED")
 
     return {"message": "Account deleted"}, 200
 
+
+# ---------------- LOGOUT ----------------
 @auth_bp.route("/logout", methods=["POST"])
 @jwt_required()
 def logout():
+
+    user_id = get_jwt_identity()["id"]
+
+    logger.info(f"LOGOUT request | user_id={user_id}")
 
     return {"message": "Logout successful (client clears token)"}, 200
