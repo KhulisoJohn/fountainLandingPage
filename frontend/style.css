@@ -1,4 +1,4 @@
-/* Global */
+
 :root {
     --H-color: rgb(52, 52, 52);
     --p-color: rgb(116, 129, 130);
@@ -561,4 +561,3 @@ strong {
 button.contact__btn {
     padding: 10px 40px;
 }
-

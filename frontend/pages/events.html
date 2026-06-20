@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Events | Fountain of Fire Ministry</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="css/auth.css" />
+</head>
+<body>
+
+<nav class="protected-nav">
+  <div class="container">
+    <a href="index.html" class="navbar-brand text-uppercase text-white fw-semibold">FOUNTAIN</a>
+    <div>
+      <a href="events.html" class="text-white me-3 text-decoration-none">Events</a>
+      <a href="prayers.html" class="text-white me-3 text-decoration-none">Prayers</a>
+      <a href="sermons.html" class="text-white me-3 text-decoration-none">Sermons</a>
+      <span id="authNavSlot"></span>
+    </div>
+  </div>
+</nav>
+
+<div class="container py-5">
+  <h3 class="mb-4">Upcoming Events</h3>
+  <div id="eventsList">
+    <p>Loading events...</p>
+  </div>
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/events.js"></script>
+
+</body>
+</html>

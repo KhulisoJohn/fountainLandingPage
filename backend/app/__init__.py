@@ -33,29 +33,67 @@ def create_app():
 
         CORS(app)
 
+        # ---------------- DB INIT ----------------
         db.init_app(app)
         logger.info("DB_INITIALIZED")
 
-        # Test DB connection
         with app.app_context():
             db.session.execute(text("SELECT 1"))
             logger.info("DATABASE_CONNECTED")
 
+            # IMPORTANT: ensure models are registered
+            from app.Modules.User.user import User
+            from app.Modules.Authentication.pending_user import PendingUser
+            from app.Modules.Prayer.prayer import Prayer
+            from app.Modules.Event.event import Event
+            from app.Modules.Sermon.sermon import Sermon
+
+        # ---------------- JWT ----------------
         jwt.init_app(app)
         logger.info("JWT_INITIALIZED")
 
+        # ---------------- MIGRATION ----------------
         migrate.init_app(app, db)
         logger.info("MIGRATION_INITIALIZED")
 
-        # Blueprints
-        from app.routes.auth_routes import auth_bp
+        # ---------------- BLUEPRINTS ----------------
+        from app.Modules.Authentication.route import auth_bp
         app.register_blueprint(auth_bp, url_prefix="/api/auth")
         logger.info("AUTH_BLUEPRINT_REGISTERED")
 
+        from app.Modules.User.route import user_bp
+        app.register_blueprint(user_bp, url_prefix="/api/user")
+        logger.info("USER_BLUEPRINT_REGISTERED")
+
+        from app.Modules.Event.route import event_bp
+        app.register_blueprint(event_bp, url_prefix="/api/events")
+        logger.info("EVENT_BLUEPRINT_REGISTERED")
+
+        from app.Modules.Prayer.route import prayer_bp
+        app.register_blueprint(prayer_bp, url_prefix="/api/prayers")
+        logger.info("PRAYER_BLUEPRINT_REGISTERED")
+
+        from app.Modules.Sermon.route import sermon_bp
+        app.register_blueprint(sermon_bp, url_prefix="/api/sermons")
+        logger.info("SERMON_BLUEPRINT_REGISTERED")
+
+        from app.Modules.Testimonial.route import testimonial_bp
+        app.register_blueprint(testimonial_bp, url_prefix="/api/testimonials")
+        logger.info("TESTIMONIAL_BLUEPRINT_REGISTERED")
+
+        # ---------------- ROOT ROUTES ----------------
         @app.route("/")
         def home():
             logger.info("HEALTH_CHECK_REQUEST")
             return {"message": "Backend running successfully"}
+
+        @app.route("/health")
+        def health():
+            logger.info("HEALTH_CHECK_REQUEST")
+            return {
+                "status": "healthy",
+                "message": "Backend running successfully"
+            }, 200
 
         logger.info("APPLICATION_READY")
 
